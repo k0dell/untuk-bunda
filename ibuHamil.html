@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bunda Cerdas: Edukasi Kehamilan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDF2F8; /* Soft Pink Background */
+        }
+        .font-pacifico {
+            font-family: 'Pacifico', cursive;
+        }
+        .tab-button {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .tab-button.active {
+            border-bottom-color: #EC4899; /* Pink */
+            color: #EC4899;
+            font-weight: 600;
+        }
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .btn-primary {
+            background-color: #EC4899;
+            color: white;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #DB2777;
+        }
+        .quiz-option {
+            transition: all 0.2s ease-in-out;
+        }
+        .quiz-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="font-pacifico text-4xl md:text-5xl text-pink-500">Bunda Cerdas</h1>
+            <p class="text-gray-600 mt-2 text-lg">Panduan Lengkap Mengatasi Ketidaknyamanan Saat Hamil</p>
+        </header>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Materi Ketidaknyamanan -->
+            <div class="card">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Seputar Keluhan Kehamilan</h2>
+                <!-- Navigasi Tab -->
+                <div class="border-b border-gray-200 mb-4">
+                    <nav class="flex flex-wrap -mb-px" id="tab-buttons">
+                        <!-- Tab buttons will be inserted here by JS -->
+                    </nav>
+                </div>
+                <!-- Konten Tab -->
+                <div id="tab-content">
+                    <!-- Tab content will be inserted here by JS -->
+                </div>
+            </div>
+
+            <!-- Fitur Menarik -->
+            <div class="grid md:grid-cols-2 gap-6 mt-8">
+                <!-- Tips Harian -->
+                <div class="card">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-pink-500 mr-2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 8v4l3 3"></path></svg>
+                        Tips Harian untuk Bunda
+                    </h3>
+                    <p id="daily-tip" class="text-gray-600 mb-4 h-20"></p>
+                    <button id="new-tip-btn" class="btn-primary w-full">Lihat Tips Lain</button>
+                </div>
+
+                <!-- Kuis Mitos atau Fakta -->
+                <div class="card">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-pink-500 mr-2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        Kuis: Mitos atau Fakta?
+                    </h3>
+                    <div id="quiz-container">
+                        <p id="quiz-question" class="text-gray-700 font-medium mb-4 h-20"></p>
+                        <div id="quiz-options" class="flex justify-around mb-4">
+                            <button data-answer="fakta" class="quiz-option bg-green-100 text-green-800 font-bold py-2 px-6 rounded-lg">Fakta</button>
+                            <button data-answer="mitos" class="quiz-option bg-red-100 text-red-800 font-bold py-2 px-6 rounded-lg">Mitos</button>
+                        </div>
+                        <div id="quiz-feedback" class="text-center p-2 rounded-md h-16"></div>
+                        <button id="next-quiz-btn" class="btn-primary w-full mt-2 hidden">Lanjut</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DATA ---
+            const discomforts = [
+                {
+                    id: 'mual',
+                    title: 'Mual & Muntah',
+                    content: `
+                        <p class="mb-3 text-gray-600">Sering disebut <i>morning sickness</i>, mual dan muntah sangat umum terjadi pada trimester pertama. Ini adalah hal yang normal dan biasanya mereda setelah trimester pertama berakhir.</p>
+                        <h4 class="font-semibold text-gray-700 mb-1">Penyebab:</h4>
+                        <p class="mb-3 text-gray-600">Peningkatan hormon kehamilan (hCG) dan estrogen secara drastis.</p>
+                        <h4 class="font-semibold text-gray-700 mb-1">Cara Mengatasi:</h4>
+                        <ul class="list-disc list-inside text-gray-600 space-y-1">
+                            <li>Makan dalam porsi kecil tapi sering.</li>
+                            <li>Hindari makanan berlemak, pedas, dan berbau tajam.</li>
+                            <li>Minum jahe hangat atau permen jahe.</li>
+                            <li>Bangun dari tempat tidur secara perlahan.</li>
+                            <li>Pastikan tubuh tetap terhidrasi dengan baik.</li>
+                        </ul>
+                    `
+                },
+                {
+                    id: 'sakit-punggung',
+                    title: 'Sakit Punggung',
+                    content: `
+                        <p class="mb-3 text-gray-600">Nyeri punggung bawah adalah keluhan umum seiring membesarnya perut. Ini normal karena tubuh beradaptasi dengan perubahan berat dan postur.</p>
+                        <h4 class="font-semibold text-gray-700 mb-1">Penyebab:</h4>
+                        <p class="mb-3 text-gray-600">Perubahan hormon yang melonggarkan sendi, penambahan berat badan, dan pergeseran pusat gravitasi tubuh.</p>
+                        <h4 class="font-semibold text-gray-700 mb-1">Cara Mengatasi:</h4>
+                        <ul class="list-disc list-inside text-gray-600 space-y-1">
+                            <li>Perbaiki postur saat duduk dan berdiri.</li>
+                            <li>Gunakan bantal untuk menopang punggung saat tidur.</li>
+                            <li>Lakukan peregangan ringan atau yoga prenatal.</li>
+                            <li>Hindari mengangkat beban berat.</li>
+                            <li>Gunakan sepatu yang nyaman dan tanpa hak tinggi.</li>
+                        </ul>
+                    `
+                },
+                {
+                    id: 'kelelahan',
+                    title: 'Kelelahan',
+                    content: `
+                        <p class="mb-3 text-gray-600">Merasa sangat lelah, terutama pada trimester pertama dan ketiga, adalah hal yang wajar. Tubuh sedang bekerja keras untuk mendukung pertumbuhan janin.</p>
+                        <h4 class="font-semibold text-gray-700 mb-1">Penyebab:</h4>
+                        <p class="mb-3 text-gray-600">Peningkatan hormon progesteron, peningkatan volume darah, dan energi yang digunakan untuk membangun plasenta.</p>
+                        <h4 class="font-semibold text-gray-700 mb-1">Cara Mengatasi:</h4>
+                        <ul class="list-disc list-inside text-gray-600 space-y-1">
+                            <li>Istirahat yang cukup dan tidur lebih awal.</li>
+                            <li>Lakukan tidur siang jika memungkinkan.</li>
+                            <li>Konsumsi makanan kaya zat besi dan protein.</li>
+                            <li>Tetap aktif dengan olahraga ringan seperti jalan kaki.</li>
+                            <li>Jangan ragu meminta bantuan pasangan atau keluarga.</li>
+                        </ul>
+                    `
+                },
+                {
+                    id: 'sering-bak',
+                    title: 'Sering Buang Air Kecil',
+                    content: `
+                        <p class="mb-3 text-gray-600">Kebutuhan untuk sering ke kamar mandi adalah salah satu tanda awal kehamilan dan akan berlanjut hingga akhir kehamilan. Ini sangat normal.</p>
+                        <h4 class="font-semibold text-gray-700 mb-1">Penyebab:</h4>
+                        <p class="mb-3 text-gray-600">Peningkatan volume darah membuat ginjal bekerja ekstra. Seiring pertumbuhan rahim, tekanan pada kandung kemih juga meningkat.</p>
+                        <h4 class="font-semibold text-gray-700 mb-1">Cara Mengatasi:</h4>
+                        <ul class="list-disc list-inside text-gray-600 space-y-1">
+                            <li>Jangan menahan buang air kecil.</li>
+                            <li>Condongkan tubuh ke depan saat buang air kecil untuk mengosongkan kandung kemih sepenuhnya.</li>
+                            <li>Hindari minum banyak sebelum tidur.</li>
+                            <li>Tetap terhidrasi sepanjang hari, jangan mengurangi minum.</li>
+                        </ul>
+                    `
+                },
+            ];
+
+            const dailyTips = [
+                "Minum air putih minimal 8 gelas sehari untuk mencegah dehidrasi dan sembelit.",
+                "Jalan kaki 30 menit setiap hari dapat meningkatkan mood dan sirkulasi darah.",
+                "Konsumsi buah-buahan kaya serat seperti pisang dan apel untuk melancarkan pencernaan.",
+                "Lakukan latihan pernapasan untuk relaksasi dan persiapan persalinan.",
+                "Berbicara atau bernyanyi untuk janin dapat membantu membangun ikatan sejak dini.",
+                "Pastikan asupan kalsium cukup dari susu, yogurt, atau keju untuk tulang Bunda dan janin.",
+                "Gunakan pelembap pada area perut untuk mengurangi rasa gatal akibat kulit meregang.",
+                "Dengarkan musik yang menenangkan untuk mengurangi stres dan membuat rileks."
+            ];
+
+            const quizData = [
+                {
+                    question: "Ibu hamil harus makan untuk porsi dua orang.",
+                    answer: "mitos",
+                    explanation: "Kebutuhan kalori hanya bertambah sekitar 300-400 kalori per hari. Fokus pada kualitas nutrisi, bukan kuantitas."
+                },
+                {
+                    question: "Minum air kelapa bisa membuat kulit bayi putih dan bersih.",
+                    answer: "mitos",
+                    explanation: "Warna kulit bayi ditentukan oleh genetika. Namun, air kelapa baik untuk hidrasi karena kaya elektrolit."
+                },
+                {
+                    question: "Olahraga ringan seperti berenang dan jalan kaki aman dan dianjurkan selama kehamilan.",
+                    answer: "fakta",
+                    explanation: "Olahraga ringan membantu menjaga kebugaran, mengurangi stres, dan mempersiapkan tubuh untuk persalinan, selama tidak ada komplikasi."
+                },
+                {
+                    question: "Stres yang dialami ibu dapat memengaruhi janin dalam kandungan.",
+                    answer: "fakta",
+                    explanation: "Stres kronis dapat melepaskan hormon kortisol yang bisa memengaruhi perkembangan janin. Penting untuk mengelola stres dengan baik."
+                },
+                 {
+                    question: "Ibu hamil dilarang minum kopi sama sekali.",
+                    answer: "mitos",
+                    explanation: "Konsumsi kafein dalam jumlah terbatas (sekitar 200mg atau 1-2 cangkir kopi) umumnya dianggap aman."
+                }
+            ];
+
+            // --- TAB LOGIC ---
+            const tabButtonsContainer = document.getElementById('tab-buttons');
+            const tabContentContainer = document.getElementById('tab-content');
+
+            discomforts.forEach((item, index) => {
+                // Create button
+                const button = document.createElement('button');
+                button.className = tab-button py-2 px-4 text-sm md:text-base font-medium text-gray-500 hover:text-pink-600 ${index === 0 ? 'active' : ''};
+                button.textContent = item.title;
+                button.dataset.target = item.id;
+                tabButtonsContainer.appendChild(button);
+
+                // Create content
+                const contentDiv = document.createElement('div');
+                contentDiv.id = content-${item.id};
+                contentDiv.className = ${index === 0 ? '' : 'hidden'};
+                contentDiv.innerHTML = item.content;
+                tabContentContainer.appendChild(contentDiv);
+            });
+
+            tabButtonsContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('tab-button')) {
+                    const targetId = e.target.dataset.target;
+
+                    // Update button styles
+                    tabButtonsContainer.querySelectorAll('.tab-button').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    e.target.classList.add('active');
+
+                    // Update content visibility
+                    tabContentContainer.querySelectorAll('div').forEach(content => {
+                        if (content.id === content-${targetId}) {
+                            content.classList.remove('hidden');
+                        } else {
+                            content.classList.add('hidden');
+                        }
+                    });
+                }
+            });
+
+            // --- DAILY TIPS LOGIC ---
+            const dailyTipEl = document.getElementById('daily-tip');
+            const newTipBtn = document.getElementById('new-tip-btn');
+            let lastTipIndex = -1;
+
+            function showNewTip() {
+                let newIndex;
+                do {
+                    newIndex = Math.floor(Math.random() * dailyTips.length);
+                } while (newIndex === lastTipIndex);
+                lastTipIndex = newIndex;
+                dailyTipEl.textContent = dailyTips[newIndex];
+            }
+
+            newTipBtn.addEventListener('click', showNewTip);
+            showNewTip(); // Initial tip
+
+            // --- QUIZ LOGIC ---
+            const quizQuestionEl = document.getElementById('quiz-question');
+            const quizOptionsEl = document.getElementById('quiz-options');
+            const quizFeedbackEl = document.getElementById('quiz-feedback');
+            const nextQuizBtn = document.getElementById('next-quiz-btn');
+            
+            let currentQuizIndex = 0;
+
+            function loadQuiz() {
+                const currentQuiz = quizData[currentQuizIndex];
+                quizQuestionEl.textContent = currentQuiz.question;
+                quizFeedbackEl.textContent = '';
+                quizFeedbackEl.className = 'text-center p-2 rounded-md h-16';
+                nextQuizBtn.classList.add('hidden');
+                quizOptionsEl.querySelectorAll('button').forEach(btn => btn.disabled = false);
+            }
+
+            quizOptionsEl.addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    const selectedAnswer = e.target.dataset.answer;
+                    const correctAnswer = quizData[currentQuizIndex].answer;
+                    const explanation = quizData[currentQuizIndex].explanation;
+
+                    quizOptionsEl.querySelectorAll('button').forEach(btn => btn.disabled = true);
+                    
+                    if (selectedAnswer === correctAnswer) {
+                        quizFeedbackEl.textContent = Benar! ${explanation};
+                        quizFeedbackEl.classList.add('bg-green-100', 'text-green-800');
+                    } else {
+                        quizFeedbackEl.textContent = Kurang Tepat. ${explanation};
+                        quizFeedbackEl.classList.add('bg-red-100', 'text-red-800');
+                    }
+                    nextQuizBtn.classList.remove('hidden');
+
+                    if (currentQuizIndex === quizData.length - 1) {
+                         nextQuizBtn.textContent = 'Ulangi Kuis';
+                    } else {
+                        nextQuizBtn.textContent = 'Lanjut';
+                    }
+                }
+            });
+
+            nextQuizBtn.addEventListener('click', () => {
+                currentQuizIndex++;
+                if (currentQuizIndex >= quizData.length) {
+                    currentQuizIndex = 0; // Restart quiz
+                }
+                loadQuiz();
+            });
+
+            loadQuiz(); // Initial quiz load
+        });
+    </script>
+</body>
+</html>
